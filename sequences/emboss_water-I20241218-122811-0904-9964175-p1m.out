@@ -1,0 +1,43 @@
+########################################
+# Program: water
+# Rundate: Wed 18 Dec 2024 12:28:24
+# Commandline: water
+#    -auto
+#    -stdout
+#    -asequence emboss_water-I20241218-122811-0904-9964175-p1m.asequence
+#    -bsequence emboss_water-I20241218-122811-0904-9964175-p1m.bsequence
+#    -datafile EBLOSUM62
+#    -gapopen 10.0
+#    -gapextend 0.5
+#    -aformat3 pair
+#    -sprotein1
+#    -sprotein2
+# Align_format: pair
+# Report_file: stdout
+########################################
+
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: KAI2582932.1
+# 2: AAH02641.1
+# Matrix: EBLOSUM62
+# Gap_penalty: 10.0
+# Extend_penalty: 0.5
+#
+# Length: 15
+# Identity:       5/15 (33.3%)
+# Similarity:     9/15 (60.0%)
+# Gaps:           0/15 ( 0.0%)
+# Score: 26.0
+# 
+#
+#=======================================
+
+KAI2582932.1      20 SRPLKSSGTRLLLAG     34
+                     ||.:.:|..|.:.:|
+AAH02641.1        41 SRSISASSARFVSSG     55
+
+
+#---------------------------------------
+#---------------------------------------

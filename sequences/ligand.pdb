@@ -1,0 +1,16 @@
+COMPND    750
+HETATM    1  O1  UNL     1      -1.932  -0.490   0.183  1.00  0.00           O  
+HETATM    2  O2  UNL     1      -0.688   0.276  -1.505  1.00  0.00           O  
+HETATM    3  N1  UNL     1       1.639   0.351   0.071  1.00  0.00           N  
+HETATM    4  C1  UNL     1       0.375  -0.109   0.675  1.00  0.00           C  
+HETATM    5  C2  UNL     1      -0.761  -0.075  -0.338  1.00  0.00           C  
+HETATM    6  H1  UNL     1      -2.564  -0.419  -0.563  1.00  0.00           H  
+HETATM    7  H2  UNL     1       1.826  -0.228  -0.751  1.00  0.00           H  
+HETATM    8  H3  UNL     1       1.483   1.284  -0.317  1.00  0.00           H  
+HETATM    9  H4  UNL     1       0.121   0.545   1.514  1.00  0.00           H  
+HETATM   10  H5  UNL     1       0.501  -1.135   1.032  1.00  0.00           H  
+CONECT    1    5    6
+CONECT    2    5    5
+CONECT    3    4    7    8
+CONECT    4    5    9   10
+END

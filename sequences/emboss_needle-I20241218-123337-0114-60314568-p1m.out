@@ -1,0 +1,237 @@
+########################################
+# Program: needle
+# Rundate: Wed 18 Dec 2024 12:33:40
+# Commandline: needle
+#    -auto
+#    -stdout
+#    -asequence emboss_needle-I20241218-123337-0114-60314568-p1m.asequence
+#    -bsequence emboss_needle-I20241218-123337-0114-60314568-p1m.bsequence
+#    -datafile EDNAFULL
+#    -gapopen 10.0
+#    -gapextend 0.5
+#    -endopen 10.0
+#    -endextend 0.5
+#    -aformat3 pair
+#    -snucleotide1
+#    -snucleotide2
+# Align_format: pair
+# Report_file: stdout
+########################################
+
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: KT749721.1
+# 2: KR711802.1
+# Matrix: EDNAFULL
+# Gap_penalty: 10.0
+# Extend_penalty: 0.5
+#
+# Length: 2407
+# Identity:    1517/2407 (63.0%)
+# Similarity:  1517/2407 (63.0%)
+# Gaps:         410/2407 (17.0%)
+# Score: 4864.5
+# 
+#
+#=======================================
+
+KT749721.1         1 --------------------------------------------------      0
+                                                                       
+KR711802.1         1 GTTCGTTGCAACAAATTGATGAGCAATGCTTTTTTATAATGCCAACTTTG     50
+
+KT749721.1         1 ------------------ATGGCTACAG-TCAGCACACAGCGGTCGTAT-     30
+                                       |||||.| || |||.|||.||        || 
+KR711802.1        51 TACAAAAAAGTTGGCACCATGGCCA-AGATCAACACCCA--------ATA     91
+
+KT749721.1        31 ---CCAGCCCTTCA-----CAGACTCTCGGTCAGAAA-----CAATGATG     67
+                        |||.||||.||     || .|||..|||   |||     ||  ||..
+KR711802.1        92 CTCCCACCCCTCCAGGACCCA-CCTCAAGGT---AAAGACCTCA--GACC    135
+
+KT749721.1        68 AAGATCTGGAAAG-GATAGAAAATGGCAGCAGCAGGACCCACTCGTTGTG    116
+                     .||||||..|..| |.| |||||||||..||||||..|||||||||...|
+KR711802.1       136 GAGATCTCAATCGCGCT-GAAAATGGCCTCAGCAGAGCCCACTCGTCAAG    184
+
+KT749721.1       117 TGAAGACTCGTCGTCTGAGCTTCAGGCAGTGA-CGTC-TGCAGAACCTAA    164
+                     |||.||..|.|||||.|.|||.|||.|.|.|| ||.| ||.|| |||..|
+KR711802.1       185 TGAGGAGACATCGTCAGTGCTGCAGCCGGGGATCGCCATGGAG-ACCAGA    233
+
+KT749721.1       165 AGACCAGCATGAATCCCGGCGGAGTTCTTTCACAGG-CAATGGAGCTTTT    213
+                     .|||..|| |||.|||.|||.|.|.||.|||||.|| ||..|||    |.
+KR711802.1       234 GGACTGGC-TGACTCCGGGCAGGGCTCCTTCACCGGCCAGGGGA----TC    278
+
+KT749721.1       214 GCCAGGCTAACTAATTTCATCATTGTGCTGAGGAACTGGGCCACCCAGCA    263
+                     ||||||||..|.....|||||.|..|||||.|.|..|||||..||..|||
+KR711802.1       279 GCCAGGCTGTCGCGCCTCATCTTCTTGCTGCGCAGGTGGGCTGCCAGGCA    328
+
+KT749721.1       264 AATCCACGATGAAGACCAGAGACCAGATTCGTT--CTTGGAGCGCTTCAG    311
+                     ..|.|||.|..|.||||||.||||.||.||.||  ||  ||.||.|||.|
+KR711802.1       329 TGTGCACCACCAGGACCAGGGACCGGACTCTTTTCCT--GATCGTTTCCG    376
+
+KT749721.1       312 GGGACCAGACATAAAGGATGTATCAAGCCGGGAGAGCAACACGCAGTCAG    361
+                     .|||.|.||..|.|||||.||.||.||||..||.|||||..|.|||    
+KR711802.1       377 TGGAGCCGAGCTTAAGGAGGTGTCCAGCCAAGAAAGCAATGCCCAG----    422
+
+KT749721.1       362 CCGCAGGTGATCCTGAGCACCAAGGCC-GGAGTAAGAAGATTCTGGCAAA    410
+                       |||..||    ||.|||     ||| ||||..||.|||      ||.|
+KR711802.1       423 --GCAAATG----TGGGCA-----GCCAGGAGCCAGCAGA------CAGA    455
+
+KT749721.1       411 GTTCAATGTCAACAAATGCAACAACGAAGAAAACTTTTGCCCCTTGGCAC    460
+                     |                        |.||||.....|.||||||.|.|| 
+KR711802.1       456 G------------------------GGAGAAGCGCCTGGCCCCTGGCCA-    480
+
+KT749721.1       461 AGTTCAATGTAAACAACAACAACAACACCAACAACAACAAGGATGGAGGC    510
+                          ||||       |||||..|||||||.||||||||.||        
+KR711802.1       481 -----AATG-------CAACACTAACACCAGCAACAACACGG--------    510
+
+KT749721.1       511 AAGGTGGAAGAAAAGAAAGACGTGAAAAAGGAGGAAAAGAAAGATGA-GA    559
+                                                 |||||||.|||||    || ||
+KR711802.1       511 ----------------------------AGGAGGAGAAGAA----GACGA    528
+
+KT749721.1       560 AAAAGAAGGAAGAAAAGAAAGATATATACATTATTGATCC-TGCAGACAA    608
+                     ||||||||||.|       .|||     |.|..|.||.|| |.||| |||
+KR711802.1       529 AAAAGAAGGATG-------CGAT-----CGTGGTGGACCCGTCCAG-CAA    565
+
+KT749721.1       609 TCTTTACTATCGATGGCTGTCCATTATCGCAATGCCTGTGATGTACAACT    658
+                     .||.|||||.||.||||||.||...|||||..|||||||..|.||.||||
+KR711802.1       566 CCTGTACTACCGCTGGCTGACCGCCATCGCCCTGCCTGTCTTCTATAACT    615
+
+KT749721.1       659 GGTGTATGCTTGTGTGCAGAGCTTGTTTTGAAGAACTTCAAACAAAGCAC    708
+                     |||.|.|||||.|.|||||.||.|||||.||.||.||.||..|..||.||
+KR711802.1       616 GGTATCTGCTTATTTGCAGGGCCTGTTTCGATGAGCTGCAGTCCGAGTAC    665
+
+KT749721.1       709 CT--TGCTTTATGGTTGGTGTTGGATTATGTATCAGATGCGATCTACATC    756
+                     ||  |||  |.|||.||||..||||.||.....||||||...|.||..||
+KR711802.1       666 CTGATGC--TGTGGCTGGTCCTGGACTACTCGGCAGATGTCCTGTATGTC    713
+
+KT749721.1       757 GTGGATTCAATTGTAAGGTTTCGAACAGGTTTTCTTGAACAAGGATTGCT    806
+                     .|||||....|||||.|...|||.|||||||||||.||.|||||.||..|
+KR711802.1       714 TTGGATGTGCTTGTACGAGCTCGGACAGGTTTTCTCGAGCAAGGCTTAAT    763
+
+KT749721.1       807 GGTCAAAGACGGAAAGAAATTAAGAGATA------------------ATT    838
+                     ||||                  ||.||||                  |||
+KR711802.1       764 GGTC------------------AGTGATACCAACAGGCTGTGGCAGCATT    795
+
+KT749721.1       839 ACATGAAGATGCCTCAGTTTAAGTTGGATACCCTCTCCCTTTTACCAACA    888
+                     |||.||.||...|.|||||.|||.|||||....|.|||||..|.||.||.
+KR711802.1       796 ACAAGACGACCACGCAGTTCAAGCTGGATGTGTTGTCCCTGGTCCCCACC    845
+
+KT749721.1       889 GATTTAGCATACCTTACAA--TGGGAATGAATTACCCTGAGGTGCGATTT    936
+                     ||..|.||.|| |||| ||  ||||.|..||.|||||.||.|||.|.||.
+KR711802.1       846 GACCTGGCTTA-CTTA-AAGGTGGGCACAAACTACCCAGAAGTGAGGTTC    893
+
+KT749721.1       937 AATCGTCT------GTTCCGCTTCAGTCGAATGTTTGAATTCTTTGATCG    980
+                     ||.||.||      |||    |||  .||..|.||||||||||||||.||
+KR711802.1       894 AACCGCCTACTGAAGTT----TTC--CCGGCTCTTTGAATTCTTTGACCG    937
+
+KT749721.1       981 TACAGAAACCAGAACAAACTACCCTAACGTAT-TTC-GAATTGGAAATCT   1028
+                     .|||||.||.||.||.||||||||.||  ||| ||| |.|||||.|| ||
+KR711802.1       938 CACAGAGACAAGGACCAACTACCCCAA--TATGTTCAGGATTGGGAA-CT    984
+
+KT749721.1      1029 T-GTTTTGTATATCCTCATCATTATCCACTGGAATGGCTGCATTTATTAT   1077
+                     | ||.|||||.||.||||||||.|||||||||||||.||||||.||.|.|
+KR711802.1       985 TGGTCTTGTACATTCTCATCATCATCCACTGGAATGCCTGCATCTACTTT   1034
+
+KT749721.1      1078 GCAATCTCCAAATCAATTGGGTTTGGCGTCGATACT--TGGGTCTATCCA   1125
+                     ||.||.|||||.|..|||||.||||| |.| |.|||  ||||||||.|||
+KR711802.1      1035 GCCATTTCCAAGTTCATTGGTTTTGG-GAC-AGACTCCTGGGTCTACCCA   1082
+
+KT749721.1      1126 AACAT----ATCCCACCCTGAATATGGACGACTTAGCAGAAAATACATCT   1171
+                     |||||    ||||||    ||..||||.||.||...|||.||.|||||.|
+KR711802.1      1083 AACATCTCAATCCCA----GAGCATGGGCGCCTCTCCAGGAAGTACATTT   1128
+
+KT749721.1      1172 ATTGCCTTTACTGGTCCACCTTGACCTTGACCACCATTGGAGAAACCCCT   1221
+                     |..|.||.||||||||||||||||||.|.|||||||||||.||.|||||.
+KR711802.1      1129 ACAGTCTCTACTGGTCCACCTTGACCCTTACCACCATTGGTGAGACCCCA   1178
+
+KT749721.1      1222 CCTCCAGTAAAGGATGAGGAATTTCTGTTTGTGGTCATTGACTTCCTGGT   1271
+                     ||.||.||.||.||||||||.|.|||.|||||||||.|.||||||.||||
+KR711802.1      1179 CCCCCCGTGAAAGATGAGGAGTATCTCTTTGTGGTCGTAGACTTCTTGGT   1228
+
+KT749721.1      1272 GGGAGTGCTTATCTTTGCAACCATTGTTGGTAATGTGGGCTCCATGATCT   1321
+                     |||.||.||.||.|||||.||||||||.||.|||||||||||||||||||
+KR711802.1      1229 GGGTGTTCTGATTTTTGCCACCATTGTGGGCAATGTGGGCTCCATGATCT   1278
+
+KT749721.1      1322 CGAACATGAATGCCTCTCGGGCCGAATTCCAATCCAAAATTGACGCCATC   1371
+                     ||||.|||||||||||.|||||.||.|||||..||||.|||||..|||||
+KR711802.1      1279 CGAATATGAATGCCTCACGGGCAGAGTTCCAGGCCAAGATTGATTCCATC   1328
+
+KT749721.1      1372 AAACAGTACATGCAGTTCCGTAAAGTGAGCAAAGACCTGGAGGTCAGGAT   1421
+                     ||.|||||||||||||||||.||.||.|.|||.|||.|||||....||.|
+KR711802.1      1329 AAGCAGTACATGCAGTTCCGCAAGGTCACCAAGGACTTGGAGACGCGGGT   1378
+
+KT749721.1      1422 CATTAAGTGGTTTGACTACTTGTGGATCAACAAGAAGAGTATAAATGAGA   1471
+                     .||...|||||||||||||.|||||..|||||||||||...|..||||||
+KR711802.1      1379 TATCCGGTGGTTTGACTACCTGTGGGCCAACAAGAAGACGGTGGATGAGA   1428
+
+KT749721.1      1472 AGGAAGTCCTCAAGAGCCTACCTGACAAACTAAAGGCTGAAATTGCCATC   1521
+                     ||||.||.|||||||||||.||.|||||.||.||||||||.||.||||||
+KR711802.1      1429 AGGAGGTGCTCAAGAGCCTCCCAGACAAGCTGAAGGCTGAGATCGCCATC   1478
+
+KT749721.1      1522 AATGTCCACTTGGAAACACTAAAGAAAGTCCGAATTTTTGCA-GATTGCG   1570
+                     ||.||.|||.||||.||.||.|||||.||.||.| |.||.|| ||.||.|
+KR711802.1      1479 AACGTGCACCTGGACACGCTGAAGAAGGTTCGCA-TCTTCCAGGACTGTG   1527
+
+KT749721.1      1571 AAGCTGGCCTCTTAATCGAGCTGGTGCTAAAGCTGCAACCTCA-GGTATA   1619
+                     |.||.||.||..|..|.|||||||||||.|||||||.||| || .||.|.
+KR711802.1      1528 AGGCAGGGCTGCTGGTGGAGCTGGTGCTGAAGCTGCGACC-CACTGTGTT   1576
+
+KT749721.1      1620 CAGCCCCGGAGACTACATCTGCCGCAAGGGAGACATTGGCAGAGAAATGT   1669
+                     ||||||.||.||.||.||||||...||||||||.|||||.|..||.||||
+KR711802.1      1577 CAGCCCTGGGGATTATATCTGCAAGAAGGGAGATATTGGGAAGGAGATGT   1626
+
+KT749721.1      1670 ATATCATCAAAGAGGGCAAACTGGCGGTGGTGGCTGACGATGGGGTAACA   1719
+                     |.||||||||.||||||||.|||||.|||||||||||.||||||||.||.
+KR711802.1      1627 ACATCATCAACGAGGGCAAGCTGGCCGTGGTGGCTGATGATGGGGTCACC   1676
+
+KT749721.1      1720 CAATTTGTGGTCTTGAGTGACGGCAGCTACTTTGGGGAAATCAGCATCTT   1769
+                     ||.||.||||||.|.||.||.|||||||||||.|||||.||||||||..|
+KR711802.1      1677 CAGTTCGTGGTCCTCAGCGATGGCAGCTACTTCGGGGAGATCAGCATTCT   1726
+
+KT749721.1      1770 AAACATAAAGGGCAGTAAAGCTGGGAACAGGCGAACAGCCAACATTAGAA   1819
+                     .|||||.|||||.||.||..|.||||||.|..|.||.||||||||..|.|
+KR711802.1      1727 GAACATCAAGGGGAGCAAGTCGGGGAACTGCAGGACGGCCAACATCCGCA   1776
+
+KT749721.1      1820 GTATCGGCTACTCCGATCTCTTCTGCCTCTCCAAGGTTGATCTGATGGAA   1869
+                     |.||.||||||||.||.||.|||||||||||.||||..|||||.|||||.
+KR711802.1      1777 GCATTGGCTACTCAGACCTGTTCTGCCTCTCAAAGGACGATCTCATGGAG   1826
+
+KT749721.1      1870 GCCCTGACTGAATATCCGGATGCCAAGAAGATTCTGGAAGAAAAAGGACG   1919
+                     |||||.||.||.||.||.||.|||||||||...|||||.||.||||||||
+KR711802.1      1827 GCCCTCACCGAGTACCCCGAAGCCAAGAAGGCCCTGGAGGAGAAAGGACG   1876
+
+KT749721.1      1920 TCAGATTCTGATGAAGGATAATTTAATCGATGAAGAAGC-AGCAAAAGAG   1968
+                     .|||||.||||||||.||.||..|.||||||| ||.||| .||.|..|.|
+KR711802.1      1877 GCAGATCCTGATGAAAGACAACCTGATCGATG-AGGAGCTGGCCAGGGCG   1925
+
+KT749721.1      1969 GGGGCAGACCCGAAGGACCTGGAAGAGAAAGTGGAAAGAA--TGGAGGCC   2016
+                     ||.||.|||||.||||||||.||.||||||||||  ||.|  |||.|.||
+KR711802.1      1926 GGCGCGGACCCCAAGGACCTTGAGGAGAAAGTGG--AGCAGCTGGGGTCC   1973
+
+KT749721.1      2017 TCCCTGGACACTTTGCAAACCAAGTTTGCCAGGCTCATGGCAGAGTACAA   2066
+                     |||||||||||..||||.||||.||||||..|.|||.||||.||||||||
+KR711802.1      1974 TCCCTGGACACCCTGCAGACCAGGTTTGCACGCCTCCTGGCTGAGTACAA   2023
+
+KT749721.1      2067 ATCCACACAGCTCAAACTGAAGCAAAGGATCA--CAAAGGTGGAAAATAA   2114
+                     ..||||.|||.|.||..|||||||..|..|||  |||  .||||||...|
+KR711802.1      2024 CGCCACCCAGATGAAGATGAAGCAGCGTCTCAGCCAA--CTGGAAAGCCA   2071
+
+KT749721.1      2115 AGTAAAGAACTTTGGCAGTGGATA------CCTGTCTGATGGCTTTGACA   2158
+                     .||.|||      ||..||||..|      ||||.|||||||    |..|
+KR711802.1      2072 GGTGAAG------GGTGGTGGGGACAAGCCCCTGGCTGATGG----GGAA   2111
+
+KT749721.1      2159 GT-----GCGACTGATACCGAA--GGAGGAAAATGA--------------   2187
+                     ||     |.|| ||.|||..||  .|||||.||..|              
+KR711802.1      2112 GTTCCCGGGGA-TGCTACAAAAACAGAGGACAAACAACAGTTGCCAACTT   2160
+
+KT749721.1      2188 --------------------------------------------------   2187
+                                                                       
+KR711802.1      2161 TCTTGTACAAAGTTGGCATTATAAGAAAGCATTGCTTATCAATTTGTTGC   2210
+
+KT749721.1      2188 -------   2187
+                            
+KR711802.1      2211 AACGAAC   2217
+
+
+#---------------------------------------
+#---------------------------------------
