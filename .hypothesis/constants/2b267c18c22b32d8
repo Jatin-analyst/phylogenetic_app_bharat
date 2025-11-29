@@ -1,0 +1,4 @@
+# file: D:\phylo_app\modules\tree_builder.py
+# hypothesis_version: 6.148.2
+
+['identity', 'nj', 'upgma']

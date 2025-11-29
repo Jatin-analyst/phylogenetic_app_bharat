@@ -1,0 +1,4 @@
+# file: D:\phylo_app\modules\exporter.py
+# hypothesis_version: 6.148.2
+
+[0.0, 'None', 'closest_relative', 'distance', 'explanation', 'fasta', 'inf', 'newick']

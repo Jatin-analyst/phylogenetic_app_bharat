@@ -1,0 +1,4 @@
+# file: D:\phylo_app\modules\parser.py
+# hypothesis_version: 6.148.2
+
+[':', '>', 'fasta', 'txt']
