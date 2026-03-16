@@ -1,0 +1,4 @@
+# file: /home/jatin-s-linux/Downloads/phylogenetic_app-20260315T053858Z-1-001/phylo_django/phylo_django/settings.py
+# hypothesis_version: 6.151.5
+
+[',', '/static/', '127.0.0.1', 'ALLOWED_HOSTS', 'APP_DIRS', 'BACKEND', 'DEBUG', 'DIRS', 'ENGINE', 'False', 'NAME', 'OPTIONS', 'SECRET_KEY', 'True', 'context_processors', 'db.sqlite3', 'default', 'django_sessions', 'localhost', 'phylo_app', 'phylo_django.urls', 'staticfiles']

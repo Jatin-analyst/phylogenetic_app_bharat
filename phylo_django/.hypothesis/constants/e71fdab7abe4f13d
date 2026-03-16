@@ -1,0 +1,4 @@
+# file: /home/jatin-s-linux/Downloads/phylogenetic_app-20260315T053858Z-1-001/phylo_django/phylo_app/views.py
+# hypothesis_version: 6.151.5
+
+[300, 400, 404, 500, 1024, '.fa', '.fasta', '.txt', 'Content-Disposition', 'No file provided.', 'POST', 'alignment', 'alignment_length', 'application/json', 'circular', 'closest_relative', 'closest_relatives', 'colorful', 'dark', 'default', 'description', 'distance', 'dpi', 'error', 'explanation', 'fasta', 'file', 'file_content', 'filename', 'id', 'image/png', 'json', 'layout', 'method', 'minimal', 'newick', 'nj', 'phylo_app/index.html', 'phylo_results', 'png', 'rectangular', 'sequence', 'sequence_count', 'settings', 'svg', 'text/plain', 'theme', 'tight', 'tree_method', 'tree_svg', 'upgma', 'utf-8']

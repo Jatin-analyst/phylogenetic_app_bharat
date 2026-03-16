@@ -1,0 +1,572 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Phylogenetics App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-space { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .pulse-border { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(0, 223, 162, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(0, 223, 162, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 223, 162, 0); }
+        }
+        #tree-canvas svg { max-width: 100%; height: auto; }
+        .relative-card-detail { display: none; }
+        .relative-card.expanded .relative-card-detail { display: block; }
+        .relative-card.expanded .arrow-down { display: none; }
+        .relative-card.expanded .arrow-up { display: inline-flex; }
+        .relative-card:not(.expanded) .arrow-up { display: none; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 h-screen flex flex-col overflow-hidden antialiased selection:bg-[#F6FA70]/40 selection:text-[#FF0060]">
+
+    <!-- Error Banner -->
+    <div id="error-banner" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 max-w-lg w-full">
+        <iconify-icon icon="solar:danger-circle-linear" class="text-lg shrink-0"></iconify-icon>
+        <span id="error-banner-text" class="flex-1"></span>
+        <button onclick="document.getElementById('error-banner').classList.add('hidden')" class="text-red-400 hover:text-red-600">
+            <iconify-icon icon="solar:close-circle-linear" class="text-lg"></iconify-icon>
+        </button>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="h-14 border-b border-slate-200 bg-white/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-sm shadow-slate-200/50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0079FF] via-[#FF0060] to-[#F6FA70] flex items-center justify-center text-white shadow-sm shadow-[#0079FF]/30">
+                <iconify-icon icon="solar:dna-linear" class="text-xl"></iconify-icon>
+            </div>
+            <span class="font-space text-lg font-medium tracking-tight text-slate-900">PHYLONETICS</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 font-medium bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-[#00DFA2] pulse-border"></span>
+                Backend Active
+            </div>
+            <div class="w-px h-5 bg-slate-200"></div>
+            <label for="file-input" class="text-slate-400 hover:text-[#0079FF] transition-colors flex items-center justify-center cursor-pointer" title="Upload file">
+                <iconify-icon icon="solar:folder-open-linear" class="text-xl"></iconify-icon>
+            </label>
+        </div>
+    </nav>
+
+    <!-- Main Application Area -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+        <!-- Left Sidebar: Settings & Input -->
+        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col z-20 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.015)] hidden md:flex">
+            <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
+
+                <!-- Step 1: Data Input -->
+                <section>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-5 h-5 rounded bg-[#0079FF]/10 text-[#0079FF] flex items-center justify-center text-xs font-space font-medium border border-[#0079FF]/20">1</div>
+                        <h2 class="text-xs font-medium text-slate-800 tracking-tight">Data Input</h2>
+                    </div>
+
+                    <!-- Hidden file input -->
+                    <input type="file" id="file-input" accept=".fasta,.fa,.txt" class="sr-only">
+
+                    <!-- Idle state (no file) -->
+                    <div id="upload-idle" class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-[#0079FF]/40 transition-all" onclick="document.getElementById('file-input').click()">
+                        <iconify-icon icon="solar:upload-linear" class="text-2xl text-slate-400 mb-2"></iconify-icon>
+                        <p class="text-xs text-slate-500">Click or drag a <span class="font-medium text-slate-700">.fasta</span> / <span class="font-medium text-slate-700">.txt</span> file</p>
+                    </div>
+
+                    <!-- Uploaded state (shown after upload) -->
+                    <div id="upload-success" class="hidden border border-[#0079FF]/30 rounded-xl p-3 bg-[#0079FF]/5 relative group transition-all">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <iconify-icon icon="solar:document-text-linear" class="text-[#0079FF] text-lg"></iconify-icon>
+                                <span id="upload-filename" class="text-sm font-medium text-slate-800 truncate w-36"></span>
+                            </div>
+                            <button id="clear-file-btn" class="text-slate-400 hover:text-[#FF0060] transition-colors">
+                                <iconify-icon icon="solar:trash-bin-trash-linear" class="text-base"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span id="upload-seq-count" class="text-slate-500 font-mono bg-white px-1.5 py-0.5 rounded border border-[#0079FF]/10"></span>
+                            <span class="flex items-center gap-1 text-[#00DFA2] font-semibold">
+                                <iconify-icon icon="solar:check-circle-linear" class="text-xs"></iconify-icon>
+                                Validated
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Upload error -->
+                    <p id="upload-error" class="hidden text-xs text-red-500 mt-2"></p>
+                </section>
+
+                <div class="h-px bg-slate-100"></div>
+
+                <!-- Step 2: Configuration -->
+                <section>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-5 h-5 rounded bg-[#00DFA2]/10 text-[#00DFA2] flex items-center justify-center text-xs font-space font-medium border border-[#00DFA2]/20">2</div>
+                        <h2 class="text-xs font-medium text-slate-800 tracking-tight">Configuration</h2>
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <!-- Tree Layout -->
+                        <div>
+                            <label class="flex items-center justify-between text-xs font-medium text-slate-600 mb-2">
+                                Tree Layout
+                                <iconify-icon icon="solar:info-circle-linear" class="text-slate-400 cursor-help" title="Rectangular or circular tree display"></iconify-icon>
+                            </label>
+                            <div class="relative">
+                                <select id="layout-select" class="w-full appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 hover:border-[#00DFA2]/50 transition-all shadow-sm pr-8 cursor-pointer focus:outline-none focus:border-[#00DFA2]">
+                                    <option value="rectangular">Rectangular</option>
+                                    <option value="circular">Circular</option>
+                                </select>
+                                <iconify-icon icon="solar:alt-arrow-down-linear" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></iconify-icon>
+                            </div>
+                        </div>
+                        <!-- Tree Method -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-2">Tree Method</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="cursor-pointer relative">
+                                    <input type="radio" name="method" value="nj" class="peer sr-only" checked>
+                                    <div class="text-center px-3 py-2 border border-slate-200 bg-white text-slate-600 rounded-lg text-xs font-medium transition-all peer-checked:border-[#00DFA2] peer-checked:bg-[#00DFA2]/10 peer-checked:text-[#00DFA2] shadow-sm peer-checked:shadow-none">NJ</div>
+                                    <div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#00DFA2] opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                </label>
+                                <label class="cursor-pointer relative">
+                                    <input type="radio" name="method" value="upgma" class="peer sr-only">
+                                    <div class="text-center px-3 py-2 border border-slate-200 bg-white text-slate-600 rounded-lg text-xs font-medium transition-all hover:bg-slate-50 peer-checked:border-[#00DFA2] peer-checked:bg-[#00DFA2]/10 peer-checked:text-[#00DFA2] shadow-sm peer-checked:shadow-none">UPGMA</div>
+                                    <div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#00DFA2] opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Theme Toggle -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-2">Color Theme</label>
+                            <div class="flex items-center gap-3">
+                                <button data-theme="default" class="theme-btn w-8 h-8 rounded-full border-2 border-[#00DFA2] bg-white p-0.5 flex items-center justify-center transition-all shadow-sm" title="Default Light">
+                                    <div class="w-full h-full rounded-full bg-slate-50 border border-slate-200"></div>
+                                </button>
+                                <button data-theme="dark" class="theme-btn w-8 h-8 rounded-full border border-slate-200 bg-white p-0.5 flex items-center justify-center hover:border-slate-400 transition-all shadow-sm" title="Dark Mode">
+                                    <div class="w-full h-full rounded-full bg-slate-900"></div>
+                                </button>
+                                <button data-theme="colorful" class="theme-btn w-8 h-8 rounded-full border border-slate-200 bg-white p-0.5 flex items-center justify-center hover:border-slate-400 transition-all shadow-sm" title="Colorful">
+                                    <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#00DFA2] via-[#0079FF] to-[#FF0060]"></div>
+                                </button>
+                                <button data-theme="minimal" class="theme-btn w-8 h-8 rounded-full border border-slate-200 bg-white p-0.5 flex items-center justify-center hover:border-slate-400 transition-all shadow-sm" title="Minimal">
+                                    <div class="w-full h-full rounded-full bg-slate-300"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Action Button -->
+            <div class="p-5 border-t border-slate-100 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.02)] z-10">
+                <button id="generate-btn" class="w-full bg-[#0079FF] text-white rounded-lg py-2.5 text-sm font-medium hover:bg-[#FF0060] shadow-md shadow-[#0079FF]/20 hover:shadow-[#FF0060]/20 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed">
+                    <iconify-icon icon="solar:magic-stick-3-linear" class="text-base group-hover:rotate-12 transition-transform" id="generate-icon"></iconify-icon>
+                    <span id="generate-label">Generate Tree</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace: Visualization -->
+        <main class="flex-1 flex flex-col min-w-0 relative z-10 bg-slate-50/50">
+
+            <!-- Pipeline Progress Bar -->
+            <div class="h-16 border-b border-slate-200 bg-white flex items-center px-4 sm:px-8 shrink-0 relative z-20 shadow-sm shadow-slate-100">
+                <div class="w-full max-w-2xl mx-auto flex items-center justify-between relative">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-100 z-0 rounded-full"></div>
+                    <div id="pipeline-track" class="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-[#0079FF] via-[#00DFA2] to-[#FF0060] z-0 rounded-full transition-all duration-500" style="width:0%"></div>
+                    <div class="relative z-10 flex flex-col items-center gap-1.5 group">
+                        <div id="step-parse" class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shadow-md transition-all">
+                            <iconify-icon icon="solar:check-read-linear" class="text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-widest absolute top-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm border border-slate-200">Parse</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-1.5 group">
+                        <div id="step-clean" class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shadow-md transition-all">
+                            <iconify-icon icon="solar:check-read-linear" class="text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-widest absolute top-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm border border-slate-200">Clean</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-1.5 group">
+                        <div id="step-align" class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shadow-md transition-all">
+                            <iconify-icon icon="solar:check-read-linear" class="text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-widest absolute top-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm border border-slate-200">Align</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-1.5 group">
+                        <div id="step-build" class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shadow-md transition-all">
+                            <iconify-icon icon="solar:check-read-linear" class="text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-widest absolute top-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm border border-slate-200">Build</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-1.5 group">
+                        <div id="step-visualize" class="w-6 h-6 rounded-full bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center shadow-md transition-all">
+                            <iconify-icon icon="solar:eye-linear" class="text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-widest absolute top-8 whitespace-nowrap">Visualize</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tree Viewer Canvas -->
+            <div class="flex-1 p-4 sm:p-6 flex flex-col overflow-hidden relative">
+                <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden relative group ring-1 ring-slate-900/5">
+                    <!-- Floating Toolbar -->
+                    <div class="absolute top-4 left-4 z-20 flex gap-2">
+                        <div class="flex items-center bg-white/90 backdrop-blur border border-slate-200 rounded-lg p-1 shadow-sm">
+                            <button id="zoom-in-btn" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-[#0079FF]/10 hover:text-[#0079FF] rounded transition-colors" title="Zoom In">
+                                <iconify-icon icon="solar:magnifer-zoom-in-linear" class="text-base"></iconify-icon>
+                            </button>
+                            <div class="w-px h-4 bg-slate-200 mx-0.5"></div>
+                            <button id="zoom-out-btn" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-[#0079FF]/10 hover:text-[#0079FF] rounded transition-colors" title="Zoom Out">
+                                <iconify-icon icon="solar:magnifer-zoom-out-linear" class="text-base"></iconify-icon>
+                            </button>
+                            <div class="w-px h-4 bg-slate-200 mx-0.5"></div>
+                            <button id="zoom-reset-btn" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-[#0079FF]/10 hover:text-[#0079FF] rounded transition-colors" title="Fit to Canvas">
+                                <iconify-icon icon="solar:full-screen-linear" class="text-base"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Canvas Area -->
+                    <div id="tree-canvas" class="flex-1 bg-[#FAFAFA] bg-grid-pattern relative overflow-auto flex items-center justify-center p-8 sm:p-16">
+                        {% if tree_svg %}
+                            {{ tree_svg|safe }}
+                        {% else %}
+                        <div class="flex flex-col items-center gap-3 text-slate-400">
+                            <iconify-icon icon="solar:dna-linear" class="text-5xl opacity-30"></iconify-icon>
+                            <p class="text-sm font-medium">Upload a file and click Generate Tree</p>
+                            <p class="text-xs">Supports .fasta, .fa, .txt formats</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Results & Downloads -->
+        <aside class="w-[22rem] bg-white border-l border-slate-200 flex flex-col z-20 shrink-0 shadow-[-4px_0_24px_rgba(0,0,0,0.015)] hidden lg:flex">
+            <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-5 h-5 rounded bg-[#FF0060]/10 text-[#FF0060] flex items-center justify-center text-xs font-space font-medium border border-[#FF0060]/20">4</div>
+                    <h2 class="text-xs font-medium text-slate-800 tracking-tight">Results &amp; Analysis</h2>
+                </div>
+                <!-- Stats Panel -->
+                <section>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-[#0079FF]/5 border border-[#0079FF]/20 rounded-xl p-3 shadow-sm">
+                            <div class="flex items-center gap-1.5 text-[#0079FF] mb-1.5">
+                                <iconify-icon icon="solar:dna-linear" class="text-sm"></iconify-icon>
+                                <span class="text-xs font-medium text-slate-600">Sequences</span>
+                            </div>
+                            <div id="stat-sequences" class="text-xl font-space font-semibold tracking-tight text-slate-800">{{ sequence_count|default:"-" }}</div>
+                        </div>
+                        <div class="bg-[#00DFA2]/5 border border-[#00DFA2]/20 rounded-xl p-3 shadow-sm">
+                            <div class="flex items-center gap-1.5 text-[#00DFA2] mb-1.5">
+                                <iconify-icon icon="solar:ruler-linear" class="text-sm"></iconify-icon>
+                                <span class="text-xs font-medium text-slate-600">Alignment</span>
+                            </div>
+                            <div id="stat-alignment" class="text-xl font-space font-semibold tracking-tight text-slate-800">
+                                {% if alignment_length %}{{ alignment_length }} <span class="text-xs text-slate-400 font-sans tracking-normal font-normal">bp</span>{% else %}-{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="h-px bg-slate-100"></div>
+                <!-- Closest Relatives Panel -->
+                <section>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-medium text-slate-500 uppercase tracking-widest">Closest Relatives</h3>
+                        <span class="text-xs bg-[#F6FA70]/30 text-slate-800 px-2 py-0.5 rounded border border-[#F6FA70] font-medium">Auto-detected</span>
+                    </div>
+                    <div id="relatives-list" class="flex flex-col gap-2.5">
+                        {% if closest_relatives %}
+                            {% for seq_id, rel in closest_relatives.items %}
+                            <div class="relative-card border border-slate-200 bg-white rounded-xl overflow-hidden hover:border-[#0079FF]/40 hover:shadow-sm transition-all cursor-pointer" onclick="toggleCard(this)">
+                                <div class="w-full flex items-center justify-between p-3 text-left">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                                        <span class="text-sm font-mono font-medium text-slate-700">{{ seq_id }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-slate-400 font-mono">dist: {{ rel.distance|floatformat:4 }}</span>
+                                        <iconify-icon icon="solar:alt-arrow-down-linear" class="arrow-down text-slate-400 text-sm"></iconify-icon>
+                                        <iconify-icon icon="solar:alt-arrow-up-linear" class="arrow-up text-[#FF0060] text-sm"></iconify-icon>
+                                    </div>
+                                </div>
+                                <div class="relative-card-detail p-4 bg-white/50 border-t border-slate-100">
+                                    <div class="flex justify-between items-center mb-2.5">
+                                        <span class="text-xs text-slate-500">Closest Match</span>
+                                        <span class="text-xs font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-200">{{ rel.closest_relative }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-xs text-slate-500">Genetic Distance</span>
+                                        <span class="text-xs font-mono text-[#00DFA2] font-semibold bg-[#00DFA2]/10 px-2 py-1 rounded border border-[#00DFA2]/30">{{ rel.distance|floatformat:4 }}</span>
+                                    </div>
+                                    <p class="text-xs leading-relaxed text-slate-600 bg-white p-2.5 rounded border border-[#0079FF]/10">{{ rel.explanation }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="text-xs text-slate-400 text-center py-6">
+                            <iconify-icon icon="solar:chart-linear" class="text-2xl mb-2 opacity-40"></iconify-icon>
+                            <p>Generate a tree to see closest relatives</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+            <!-- Download Section -->
+            <div class="p-5 border-t border-slate-200 bg-slate-50 shrink-0">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-5 h-5 rounded bg-[#F6FA70]/30 text-slate-700 flex items-center justify-center text-xs font-space font-medium border border-[#F6FA70]">5</div>
+                    <h2 class="text-xs font-medium text-slate-800 tracking-tight">Export Results</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="download-png" onclick="downloadFile('png')" class="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-200 rounded-xl bg-white hover:bg-[#0079FF]/5 hover:border-[#0079FF]/50 transition-all text-slate-700 group shadow-sm">
+                        <iconify-icon icon="solar:gallery-download-linear" class="text-xl text-slate-400 group-hover:text-[#0079FF] transition-colors"></iconify-icon>
+                        <span class="text-xs font-medium group-hover:text-[#0079FF] transition-colors">PNG Tree</span>
+                    </button>
+                    <button id="download-newick" onclick="downloadFile('newick')" class="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-200 rounded-xl bg-white hover:bg-[#00DFA2]/5 hover:border-[#00DFA2]/50 transition-all text-slate-700 group shadow-sm">
+                        <iconify-icon icon="solar:programming-linear" class="text-xl text-slate-400 group-hover:text-[#00DFA2] transition-colors"></iconify-icon>
+                        <span class="text-xs font-medium group-hover:text-[#00DFA2] transition-colors">Newick</span>
+                    </button>
+                    <button id="download-fasta" onclick="downloadFile('fasta')" class="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-200 rounded-xl bg-white hover:bg-[#FF0060]/5 hover:border-[#FF0060]/50 transition-all text-slate-700 group shadow-sm">
+                        <iconify-icon icon="solar:document-text-linear" class="text-xl text-slate-400 group-hover:text-[#FF0060] transition-colors"></iconify-icon>
+                        <span class="text-xs font-medium group-hover:text-[#FF0060] transition-colors">FASTA</span>
+                    </button>
+                    <button id="download-json" onclick="downloadFile('json')" class="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-200 rounded-xl bg-white hover:bg-[#F6FA70]/20 hover:border-[#F6FA70] transition-all text-slate-700 group shadow-sm">
+                        <iconify-icon icon="solar:code-file-linear" class="text-xl text-slate-400 group-hover:text-slate-800 transition-colors"></iconify-icon>
+                        <span class="text-xs font-medium group-hover:text-slate-800 transition-colors">JSON Data</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+let selectedTheme = 'default';
+let zoomLevel = 1;
+
+// Theme selection
+document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        selectedTheme = btn.dataset.theme;
+        document.querySelectorAll('.theme-btn').forEach(b => {
+            b.classList.remove('border-2', 'border-[#00DFA2]');
+            b.classList.add('border', 'border-slate-200');
+        });
+        btn.classList.remove('border', 'border-slate-200');
+        btn.classList.add('border-2', 'border-[#00DFA2]');
+    });
+});
+
+// File upload
+const fileInput = document.getElementById('file-input');
+fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const res = await fetch('/upload/', { method: 'POST', headers: { 'X-CSRFToken': csrfToken }, body: formData });
+        const data = await res.json();
+        if (!res.ok) {
+            showUploadError(data.error || 'Upload failed.');
+            return;
+        }
+        document.getElementById('upload-idle').classList.add('hidden');
+        document.getElementById('upload-success').classList.remove('hidden');
+        document.getElementById('upload-filename').textContent = data.filename;
+        document.getElementById('upload-seq-count').textContent = data.sequence_count + ' seqs';
+        document.getElementById('upload-error').classList.add('hidden');
+    } catch (e) {
+        showUploadError('Network error during upload.');
+    }
+    fileInput.value = '';
+});
+
+// Clear file
+document.getElementById('clear-file-btn').addEventListener('click', () => {
+    document.getElementById('upload-success').classList.add('hidden');
+    document.getElementById('upload-idle').classList.remove('hidden');
+});
+
+// Drag & drop on idle area
+const idleArea = document.getElementById('upload-idle');
+idleArea.addEventListener('dragover', e => { e.preventDefault(); idleArea.classList.add('border-[#0079FF]/60'); });
+idleArea.addEventListener('dragleave', () => idleArea.classList.remove('border-[#0079FF]/60'));
+idleArea.addEventListener('drop', e => {
+    e.preventDefault();
+    idleArea.classList.remove('border-[#0079FF]/60');
+    const dt = e.dataTransfer;
+    if (dt.files.length) { fileInput.files = dt.files; fileInput.dispatchEvent(new Event('change')); }
+});
+
+function showUploadError(msg) {
+    const el = document.getElementById('upload-error');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+}
+
+function showBannerError(msg) {
+    document.getElementById('error-banner-text').textContent = msg;
+    document.getElementById('error-banner').classList.remove('hidden');
+}
+
+// Pipeline step helpers
+const stepColors = {
+    parse: { active: 'bg-[#0079FF] text-white shadow-[#0079FF]/20', idle: 'bg-slate-200 text-slate-500' },
+    clean: { active: 'bg-[#00DFA2] text-slate-900 shadow-[#00DFA2]/20', idle: 'bg-slate-200 text-slate-500' },
+    align: { active: 'bg-[#F6FA70] text-slate-800 shadow-[#F6FA70]/40', idle: 'bg-slate-200 text-slate-500' },
+    build: { active: 'bg-[#FF0060] text-white shadow-[#FF0060]/20', idle: 'bg-slate-200 text-slate-500' },
+    visualize: { active: 'bg-white border-2 border-[#FF0060] text-[#FF0060] ring-4 ring-[#FF0060]/10', idle: 'bg-white border-2 border-slate-200 text-slate-400' },
+};
+
+function activateStep(stepId, colorKey) {
+    const el = document.getElementById('step-' + stepId);
+    el.className = 'w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all ' + stepColors[colorKey].active;
+}
+
+function resetSteps() {
+    Object.keys(stepColors).forEach(k => {
+        const el = document.getElementById('step-' + k);
+        if (el) el.className = 'w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all ' + stepColors[k].idle;
+    });
+    document.getElementById('pipeline-track').style.width = '0%';
+}
+
+// Generate tree
+document.getElementById('generate-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('generate-btn');
+    const label = document.getElementById('generate-label');
+    btn.disabled = true;
+    label.textContent = 'Generating...';
+    document.getElementById('error-banner').classList.add('hidden');
+    resetSteps();
+
+    const layout = document.getElementById('layout-select').value;
+    const method = document.querySelector('input[name="method"]:checked').value;
+    const theme = selectedTheme;
+
+    // Animate steps
+    const steps = [
+        { id: 'parse', color: 'parse', pct: '20%' },
+        { id: 'clean', color: 'clean', pct: '40%' },
+        { id: 'align', color: 'align', pct: '60%' },
+        { id: 'build', color: 'build', pct: '80%' },
+        { id: 'visualize', color: 'visualize', pct: '100%' },
+    ];
+    let stepIdx = 0;
+    const stepInterval = setInterval(() => {
+        if (stepIdx < steps.length) {
+            activateStep(steps[stepIdx].id, steps[stepIdx].color);
+            document.getElementById('pipeline-track').style.width = steps[stepIdx].pct;
+            stepIdx++;
+        }
+    }, 400);
+
+    try {
+        const res = await fetch('/generate/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ layout, method, theme })
+        });
+        clearInterval(stepInterval);
+        const data = await res.json();
+        if (!res.ok) {
+            showBannerError(data.error || 'Generation failed.');
+            resetSteps();
+            btn.disabled = false;
+            label.textContent = 'Generate Tree';
+            return;
+        }
+        // Update tree canvas
+        document.getElementById('tree-canvas').innerHTML = data.tree_svg;
+        // Update stats
+        document.getElementById('stat-sequences').textContent = data.sequence_count;
+        document.getElementById('stat-alignment').innerHTML = data.alignment_length + ' <span class="text-xs text-slate-400 font-sans tracking-normal font-normal">bp</span>';
+        // Update relatives
+        updateRelatives(data.closest_relatives);
+        // Ensure all steps active
+        steps.forEach(s => { activateStep(s.id, s.color); });
+        document.getElementById('pipeline-track').style.width = '100%';
+    } catch (e) {
+        clearInterval(stepInterval);
+        showBannerError('Network error. Please try again.');
+        resetSteps();
+    }
+    btn.disabled = false;
+    label.textContent = 'Generate Tree';
+});
+
+function updateRelatives(relatives) {
+    const list = document.getElementById('relatives-list');
+    if (!relatives || Object.keys(relatives).length === 0) return;
+    list.innerHTML = '';
+    Object.entries(relatives).forEach(([seqId, rel]) => {
+        const card = document.createElement('div');
+        card.className = 'relative-card border border-slate-200 bg-white rounded-xl overflow-hidden hover:border-[#0079FF]/40 hover:shadow-sm transition-all cursor-pointer';
+        card.onclick = function() { toggleCard(this); };
+        card.innerHTML = `
+            <div class="w-full flex items-center justify-between p-3 text-left">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                    <span class="text-sm font-mono font-medium text-slate-700">${seqId}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-mono">dist: ${rel.distance.toFixed(4)}</span>
+                    <iconify-icon icon="solar:alt-arrow-down-linear" class="arrow-down text-slate-400 text-sm"></iconify-icon>
+                    <iconify-icon icon="solar:alt-arrow-up-linear" class="arrow-up text-[#FF0060] text-sm"></iconify-icon>
+                </div>
+            </div>
+            <div class="relative-card-detail p-4 bg-white/50 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-2.5">
+                    <span class="text-xs text-slate-500">Closest Match</span>
+                    <span class="text-xs font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-200">${rel.closest_relative}</span>
+                </div>
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs text-slate-500">Genetic Distance</span>
+                    <span class="text-xs font-mono text-[#00DFA2] font-semibold bg-[#00DFA2]/10 px-2 py-1 rounded border border-[#00DFA2]/30">${rel.distance.toFixed(4)}</span>
+                </div>
+                <p class="text-xs leading-relaxed text-slate-600 bg-white p-2.5 rounded border border-[#0079FF]/10">${rel.explanation}</p>
+            </div>`;
+        list.appendChild(card);
+    });
+}
+
+function toggleCard(card) {
+    const wasExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.relative-card').forEach(c => c.classList.remove('expanded'));
+    if (!wasExpanded) card.classList.add('expanded');
+}
+
+function downloadFile(format) {
+    window.location.href = '/download/' + format + '/';
+}
+
+// Zoom controls
+document.getElementById('zoom-in-btn').addEventListener('click', () => { zoomLevel = Math.min(zoomLevel + 0.2, 3); applyZoom(); });
+document.getElementById('zoom-out-btn').addEventListener('click', () => { zoomLevel = Math.max(zoomLevel - 0.2, 0.3); applyZoom(); });
+document.getElementById('zoom-reset-btn').addEventListener('click', () => { zoomLevel = 1; applyZoom(); });
+function applyZoom() {
+    const svg = document.querySelector('#tree-canvas svg');
+    if (svg) svg.style.transform = `scale(${zoomLevel})`;
+}
+</script>
+</body></html>
