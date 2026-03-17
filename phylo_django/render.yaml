@@ -10,6 +10,6 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: ".onrender.com"
+        value: "phylo-django.onrender.com,.onrender.com"
       - key: PYTHON_VERSION
         value: "3.11.0"
