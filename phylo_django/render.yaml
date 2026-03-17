@@ -2,7 +2,7 @@ services:
   - type: web
     name: phylo-django
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && mkdir -p django_sessions && python manage.py collectstatic --noinput
     startCommand: gunicorn phylo_django.wsgi:application
     envVars:
       - key: SECRET_KEY
