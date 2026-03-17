@@ -7,7 +7,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-insecure-key-change-in-production
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1'] + [
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'phylogenetic-app-bharat.onrender.com'] + [
     h for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h
 ]
 
@@ -48,7 +48,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 SESSION_FILE_PATH = BASE_DIR / 'django_sessions'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATABASES = {
